@@ -2,12 +2,31 @@
 
 import sys
 from random import choice
+import discord
+import os
+
+
+client = discord.Client()
+
+
+@client.event
+async def on_ready():
+    print(f"We have logged in as {client.user}")
+
+
+@client.event
+async def on_message(message):
+    if message.author == client.user:
+        return
+
+    if message.content.startswith("$hello"):
+        await message.channel.send("Hello!")
 
 
 def open_and_read_file(filenames):
     """Take list of files. Open them, read them, and return one long string."""
 
-    body = ''
+    body = ""
     for filename in filenames:
         text_file = open(filename)
         body = body + text_file.read()
@@ -52,7 +71,7 @@ def make_text(chains):
         words.append(word)
         key = (key[1], word)
 
-    return ' '.join(words)
+    return " ".join(words)
 
 
 # Get the filenames from the user through a command line prompt, ex:
@@ -64,3 +83,6 @@ text = open_and_read_file(filenames)
 
 # Get a Markov chain
 chains = make_chains(text)
+
+
+client.run(os.environ.get("DISCORD_TOKEN"))
